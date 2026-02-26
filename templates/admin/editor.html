@@ -1,22 +1,179 @@
-{% extends "base.html" %} {% block content %}
-<h1>{% if post %}Tahrirlash{% else %}Yangi post{% endif %}</h1>
-<textarea id="content" rows="20" cols="80">
-{{ post.content if post else '' }}</textarea
->
-<button onclick="save()">Saqlash</button>
+{% extends "base.html" %} {% block title %}{% if post %}Tahrirlash{% else
+%}Yangi post{% endif %} — PulatAzim{% endblock %} {% block content %}
+<div style="padding: 20px 0">
+    <div
+        style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        "
+    >
+        <h1 style="font-size: 22px; font-weight: 600">
+            {% if post %}Tahrirlash{% else %}Yangi post{% endif %}
+        </h1>
+        <a href="/admin/dashboard" style="font-size: 14px; color: #999"
+            >← Dashboard</a
+        >
+    </div>
+
+    <!-- Fayl yo'li -->
+    <div style="margin-bottom: 16px">
+        <label
+            style="
+                font-size: 13px;
+                color: #666;
+                display: block;
+                margin-bottom: 6px;
+            "
+            >Fayl yo'li</label
+        >
+        <input
+            type="text"
+            id="filepath"
+            value="{{ post.filepath if post else '' }}"
+            placeholder="content/blog/2024-01-mening-postim.md"
+            style="
+                width: 100%;
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 14px;
+                font-family: monospace;
+            "
+        />
+    </div>
+
+    <!-- Commit xabari -->
+    <div style="margin-bottom: 16px">
+        <label
+            style="
+                font-size: 13px;
+                color: #666;
+                display: block;
+                margin-bottom: 6px;
+            "
+            >Commit xabari</label
+        >
+        <input
+            type="text"
+            id="message"
+            value="{% if post %}content: {{ post.title }} yangilandi{% else %}content: yangi post qo'shildi{% endif %}"
+            style="
+                width: 100%;
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 14px;
+            "
+        />
+    </div>
+
+    <!-- Markdown editor -->
+    <div style="margin-bottom: 16px">
+        <label
+            style="
+                font-size: 13px;
+                color: #666;
+                display: block;
+                margin-bottom: 6px;
+            "
+            >Markdown content</label
+        >
+        <textarea
+            id="content"
+            rows="24"
+            placeholder="---
+title: Mening postim
+date: 2024-01-15
+tags: [python, flask]
+description: Post haqida qisqacha.
+published: true
+---
+
+# Sarlavha
+
+Matn shu yerda..."
+            style="
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 14px;
+                font-family: monospace;
+                line-height: 1.6;
+                resize: vertical;
+            "
+        >
+{% if post %}{{ post.raw if post.raw else '' }}{% endif %}</textarea
+        >
+    </div>
+
+    <!-- Tugmalar -->
+    <div style="display: flex; gap: 12px">
+        <button
+            onclick="savePost()"
+            style="
+                padding: 10px 24px;
+                background: #1a1a1a;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                font-size: 15px;
+                cursor: pointer;
+            "
+        >
+            GitHub'ga saqlash
+        </button>
+        <a
+            href="/admin/dashboard"
+            style="
+                padding: 10px 24px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 15px;
+                color: #555;
+            "
+        >
+            Bekor qilish
+        </a>
+    </div>
+
+    <div id="status" style="margin-top: 16px; font-size: 14px"></div>
+</div>
+
 <script>
-    async function save() {
+    async function savePost() {
+        const path = document.getElementById("filepath").value.trim();
         const content = document.getElementById("content").value;
+        const message = document.getElementById("message").value;
+        const status = document.getElementById("status");
+
+        if (!path) {
+            status.style.color = "red";
+            status.textContent = "Fayl yo'li kiritilmagan!";
+            return;
+        }
+
+        status.style.color = "#666";
+        status.textContent = "Saqlanmoqda...";
+
         const res = await fetch("/admin/save", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                path: '{{ post.filepath if post else "" }}',
-                content: content,
-            }),
+            body: JSON.stringify({ path, content, message }),
         });
+
         const data = await res.json();
-        if (data.success) window.location.href = "/admin/dashboard";
+
+        if (data.success) {
+            status.style.color = "green";
+            status.textContent = "GitHub'ga saqlandi! ✓";
+            setTimeout(() => (window.location.href = "/admin/dashboard"), 1500);
+        } else {
+            status.style.color = "red";
+            status.textContent = "Xato: " + (data.error || "Noma'lum xato");
+        }
     }
 </script>
 {% endblock %}

@@ -2,15 +2,15 @@ import datetime
 from functools import wraps
 
 import jwt
-from flask import jsonify, request
+from flask import redirect, request
 
 from config import Config
 
 
 def generate_token():
     payload = {
-        "exp": True,
-        "iat": datetime.datetime.utcnow()
+        "admin": True,
+        "exp": datetime.datetime.utcnow()
         + datetime.timedelta(hours=Config.JWT_EXPIRY_HOURS),
     }
     token = jwt.encode(payload, Config.JWT_SECRET_KEY, algorithm="HS256")  # pyright: ignore[reportArgumentType]
@@ -20,16 +20,16 @@ def generate_token():
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = request.cookies.get("token") or request.headers.get("Authorization")
+        token = request.cookies.get("token")
 
         if not token:
-            return jsonify({"error": "Token yo'q"}), 401
+            return redirect("/admin/login")
         try:
             jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=["HS256"])  # pyright: ignore[reportArgumentType]
         except jwt.ExpiredSignatureError:
-            return jsonify({"error": "Token muddati tugagan"}), 401
+            return redirect("/admin/login")
         except jwt.InvalidTokenError:
-            return jsonify({"error": "Token noto'g'ri"}), 401
+            return redirect("/admin/login")
         return f(*args, **kwargs)
 
     return decorated

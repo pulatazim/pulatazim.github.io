@@ -1,10 +1,169 @@
-{% extends "base.html" %} {% block content %}
-<h1>Dashboard</h1>
-<a href="/admin/new">+ Yangi post</a>
-<h2>Blog postlar</h2>
-{% for post in posts %}
-<div>
-    {{ post.title }}
-    <a href="/admin/edit/{{ post.slug }}">Tahrirlash</a>
+{% extends "base.html" %} {% block title %}Dashboard — PulatAzim{% endblock %}
+{% block content %}
+<div style="padding: 20px 0">
+    <div
+        style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        "
+    >
+        <h1 style="font-size: 22px; font-weight: 600">Dashboard</h1>
+        <button
+            onclick="logout()"
+            style="
+                font-size: 14px;
+                color: #999;
+                background: none;
+                border: none;
+                cursor: pointer;
+            "
+        >
+            Chiqish
+        </button>
+    </div>
+
+    <!-- Blog postlar -->
+    <div style="margin-bottom: 48px">
+        <div
+            style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            "
+        >
+            <h2 style="font-size: 17px; font-weight: 600">Blog postlar</h2>
+            <a
+                href="/admin/new?type=blog"
+                style="font-size: 14px; border-bottom: 1px solid #1a1a1a"
+                >+ Yangi post</a
+            >
+        </div>
+
+        <ul class="post-list">
+            {% for post in posts %}
+            <li
+                class="post-item"
+                style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                "
+            >
+                <div>
+                    <a href="/blog/{{ post.slug }}">{{ post.title }}</a>
+                    <div class="meta">
+                        {% if post.date %}{{ post.date.strftime('%d %B, %Y')
+                        }}{% endif %}
+                    </div>
+                </div>
+                <div style="display: flex; gap: 16px">
+                    <a
+                        href="/admin/edit/content/blog/{{ post.slug }}.md"
+                        style="font-size: 14px; color: #555"
+                        >Tahrirlash</a
+                    >
+                    <button
+                        onclick="deletePost('content/blog/{{ post.slug }}.md')"
+                        style="
+                            font-size: 14px;
+                            color: #e00;
+                            background: none;
+                            border: none;
+                            cursor: pointer;
+                        "
+                    >
+                        O'chirish
+                    </button>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Loyihalar -->
+    <div>
+        <div
+            style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            "
+        >
+            <h2 style="font-size: 17px; font-weight: 600">Loyihalar</h2>
+            <a
+                href="/admin/new?type=projects"
+                style="font-size: 14px; border-bottom: 1px solid #1a1a1a"
+                >+ Yangi loyiha</a
+            >
+        </div>
+
+        <ul class="post-list">
+            {% for project in projects %}
+            <li
+                class="post-item"
+                style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                "
+            >
+                <div>
+                    <a href="/projects/{{ project.slug }}"
+                        >{{ project.title }}</a
+                    >
+                    <div class="meta">
+                        {% if project.date %}{{ project.date.strftime('%d %B,
+                        %Y') }}{% endif %}
+                    </div>
+                </div>
+                <div style="display: flex; gap: 16px">
+                    <a
+                        href="/admin/edit/content/projects/{{ project.slug }}.md"
+                        style="font-size: 14px; color: #555"
+                        >Tahrirlash</a
+                    >
+                    <button
+                        onclick="deletePost('content/projects/{{ project.slug }}.md')"
+                        style="
+                            font-size: 14px;
+                            color: #e00;
+                            background: none;
+                            border: none;
+                            cursor: pointer;
+                        "
+                    >
+                        O'chirish
+                    </button>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
-{% endfor %} {% endblock %}
+
+<script>
+    function logout() {
+        document.cookie =
+            "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        window.location.href = "/";
+    }
+
+    async function deletePost(path) {
+        if (!confirm("Haqiqatan o'chirmoqchimisiz?")) return;
+
+        const res = await fetch("/admin/delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ path }),
+        });
+
+        const data = await res.json();
+        if (data.success) window.location.reload();
+        else alert("Xato: " + data.error);
+    }
+</script>
+{% endblock %}

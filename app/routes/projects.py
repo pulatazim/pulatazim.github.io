@@ -20,4 +20,4 @@ def project(slug):
     if not os.path.exists(file_path):
         abort(404)
     project = parse_markdown_file(file_path)
-    return render_template("projects/project.html", project=project)
+    return render_template("projects/detail.html", project=project)

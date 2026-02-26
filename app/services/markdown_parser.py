@@ -25,6 +25,7 @@ def parse_markdown_file(file_path):
     # frontmatter + HTML ni birlashtiramiz
     result = frontmatter or {}
     result["content"] = html_content
+    result["raw"] = raw
 
     # Sana formatini tekshiramiz
     if "date" in result and isinstance(result["date"], str):

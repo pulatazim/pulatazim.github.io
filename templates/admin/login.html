@@ -1,22 +1,72 @@
-{% extends "base.html" %} {% block content %}
-<h1>Admin Login</h1>
-<input type="password" id="password" placeholder="Parol" />
-<button onclick="login()">Kirish</button>
+{% extends "base.html" %} {% block title %}Admin Login — PulatAzim{% endblock %}
+{% block content %}
+<div style="max-width: 360px; margin: 80px auto">
+    <h1 style="font-size: 22px; font-weight: 600; margin-bottom: 24px">
+        Admin kirish
+    </h1>
+
+    <div
+        id="error"
+        style="color: red; font-size: 14px; margin-bottom: 16px; display: none"
+    ></div>
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Parol"
+        style="
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            margin-bottom: 12px;
+            outline: none;
+        "
+    />
+
+    <button
+        onclick="login()"
+        style="
+            width: 100%;
+            padding: 10px;
+            background: #1a1a1a;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+        "
+    >
+        Kirish
+    </button>
+</div>
+
 <script>
     async function login() {
         const password = document.getElementById("password").value;
+        const error = document.getElementById("error");
+
         const res = await fetch("/admin/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ password }),
         });
+
         const data = await res.json();
+
         if (data.token) {
-            document.cookie = `token=${data.token}`;
+            document.cookie = `token=${data.token}; path=/`;
             window.location.href = "/admin/dashboard";
         } else {
-            alert(data.error);
+            error.style.display = "block";
+            error.textContent = data.error;
         }
     }
+
+    // Enter tugmasi bilan ham kirish
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") login();
+    });
 </script>
 {% endblock %}
