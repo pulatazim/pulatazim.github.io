@@ -1,0 +1,10 @@
+{% extends "base.html" %} {% block content %}
+<h1>Dashboard</h1>
+<a href="/admin/new">+ Yangi post</a>
+<h2>Blog postlar</h2>
+{% for post in posts %}
+<div>
+    {{ post.title }}
+    <a href="/admin/edit/{{ post.slug }}">Tahrirlash</a>
+</div>
+{% endfor %} {% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %} {% block content %}
+<h1>{% if post %}Tahrirlash{% else %}Yangi post{% endif %}</h1>
+<textarea id="content" rows="20" cols="80">
+{{ post.content if post else '' }}</textarea
+>
+<button onclick="save()">Saqlash</button>
+<script>
+    async function save() {
+        const content = document.getElementById("content").value;
+        const res = await fetch("/admin/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                path: '{{ post.filepath if post else "" }}',
+                content: content,
+            }),
+        });
+        const data = await res.json();
+        if (data.success) window.location.href = "/admin/dashboard";
+    }
+</script>
+{% endblock %}
