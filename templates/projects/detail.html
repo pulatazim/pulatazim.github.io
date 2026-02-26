@@ -1,3 +1,22 @@
-{% extends "base.html" %} {% block content %}
-<h1>{{ project.title }}</h1>
-{{ project.content | safe }} {% endblock %}
+{% extends "base.html" %} {% block title %}{{ project.title }} — PulatAzim{%
+endblock %} {% block content %}
+<div class="post-detail">
+    <h1>{{ project.title }}</h1>
+    <div class="meta">
+        {% if project.date %} {{ project.date.strftime('%d %B, %Y') }} {% endif
+        %}
+    </div>
+
+    {% if project.github or project.live %}
+    <div class="project-links">
+        {% if project.github %}
+        <a href="{{ project.github }}" target="_blank">GitHub →</a>
+        {% endif %} {% if project.live %}
+        <a href="{{ project.live }}" target="_blank">Live →</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="content">{{ project.content | safe }}</div>
+</div>
+{% endblock %}

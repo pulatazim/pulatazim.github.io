@@ -1,3 +1,12 @@
-{% extends "base.html" %} {% block content %}
-<h1>{{ post.title }}</h1>
-{{ post.content | safe }} {% endblock %}
+{% extends "base.html" %} {% block title %}{{ post.title }} — PulatAzim{%
+endblock %} {% block content %}
+<div class="post-detail">
+    <h1>{{ post.title }}</h1>
+    <div class="meta">
+        {% if post.date %} {{ post.date.strftime('%d %B, %Y') }} {% endif %} {%
+        if post.tags %} · {% for tag in post.tags %}{{ tag }}{% if not loop.last
+        %}, {% endif %}{% endfor %} {% endif %}
+    </div>
+    <div class="content">{{ post.content | safe }}</div>
+</div>
+{% endblock %}

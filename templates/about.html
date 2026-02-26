@@ -1,3 +1,6 @@
-{% extends "base.html" %} {% block content %}
-<h1>{{ about.title }}</h1>
-{{ about.content | safe }} {% endblock %}
+{% extends "base.html" %} {% block title %}Men haqimda — PulatAzim{% endblock %}
+{% block content %}
+<div class="about">
+    <div class="content">{{ about.content | safe }}</div>
+</div>
+{% endblock %}

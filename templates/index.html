@@ -1,4 +1,29 @@
-{% extends "base.html" %} {% block content %}
-<h1>Salom, men PulatAzim!</h1>
-<p>Backend developer</p>
+{% extends "base.html" %} {% block title %}PulatAzim — Backend Developer{%
+endblock %} {% block content %}
+<div class="home">
+    <img
+        src="/static/assets/images/avatar.jpeg"
+        alt="PulatAzim"
+        class="avatar"
+    />
+
+    <h1>Azimjon Tursunpo'lat</h1>
+    <p class="subtitle">Backend Developer</p>
+
+    <p class="bio">
+        Python va Flask bilan ishlayman. 42.uz talabasi. Texnik bo'lmagan
+        narsalar haqida yozaman.
+    </p>
+
+    <div class="social-links">
+        <a href="https://github.com/pulatazim" target="_blank">GitHub</a>
+        <a href="https://t.me/pulatazim" target="_blank">Telegram</a>
+        <a href="https://linkedin.com/in/pulatazim" target="_blank">LinkedIn</a>
+    </div>
+
+    <div class="cta-links">
+        <a href="/blog">Blog o'qish</a>
+        <a href="/about">Men haqimda</a>
+    </div>
+</div>
 {% endblock %}

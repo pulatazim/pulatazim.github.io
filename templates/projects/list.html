@@ -1,8 +1,25 @@
-{% extends "base.html" %} {% block content %}
-<h1>Projects</h1>
-{% for project in projects %}
-<div>
-    <a href="/projects/{{ project.slug }}">{{ project.title }}</a>
-    <p>{{ project.description }}</p>
-</div>
-{% endfor %} {% endblock %}
+{% extends "base.html" %} {% block title %}Projects — PulatAzim{% endblock %} {%
+block content %}
+<h1 class="page-title">Projects</h1>
+
+<ul class="post-list">
+    {% for project in projects %}
+    <li class="post-item">
+        <a href="/projects/{{ project.slug }}">{{ project.title }}</a>
+        <div class="meta">
+            {% if project.date %} {{ project.date.strftime('%d %B, %Y') }} {%
+            endif %}
+        </div>
+        {% if project.description %}
+        <div class="description">{{ project.description }}</div>
+        {% endif %} {% if project.tags %}
+        <div class="tags">
+            {% for tag in project.tags %}
+            <span class="tag">{{ tag }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
